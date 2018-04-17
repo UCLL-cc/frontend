@@ -37,7 +37,7 @@ jobs:
           command: heroku git:remote -a ucll-cc-frontend
       - run:
           name: Push it to heroku
-          command: git push heroku master
+          command: git push --force git@heroku.com:ucll-cc-frontend.git HEAD:refs/heads/master
       - run:
           name: Restart heroku
           command: heroku restart
