@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/frontend
+    docker:
+      - image: circleci/node:8.11.1
+    steps:
+      - checkout
+      - restore-cache:
+          name: Restore cache
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install packages
+          command: yarn install
+      - save-cache:
+          name: Save cache
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Run tests
+          command: yarn test
