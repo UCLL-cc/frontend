@@ -26,6 +26,9 @@ jobs:
       enabled: true
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+              - "b9:24:92:ed:aa:09:92:61:4e:ec:99:c5:a4:45:ff:ca"
       - run:
           name: Setup heroku
           command: bash .circleci/setup-heroku.sh
