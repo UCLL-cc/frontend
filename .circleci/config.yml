@@ -20,3 +20,25 @@ jobs:
       - run:
           name: Run tests
           command: yarn test
+  deploy:
+    working_directory: ~/frontend
+    machine:
+      enabled: true
+    steps:
+      - checkout
+      - run:
+          name: Setup heroku
+          command: bash .circleci/setup-heroku.sh
+      - run:
+          name: Push it to heroku
+          command: git push heroku master
+
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+              - build
