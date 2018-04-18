@@ -24,6 +24,7 @@ class App extends Component {
           dates={this.state.dates}
           onSelect={this.onSelectDay}
           parentState={this}
+          selectedDay={this.state.selectedDay}
         />
         <Visualizer
           selectedDay={this.state.selectedDay}

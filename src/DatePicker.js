@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 
-export default class DataPicker extends Component {
+export default class DatePicker extends Component {
   render() {
-    const dates = this.props.dates;
+    const { dates } = this.props;
     if (dates.fetching) {
       return <h2>Loading ...</h2>;
     }
+
     return (
       <ul>
         {dates.data.map(date => (
@@ -16,11 +17,19 @@ export default class DataPicker extends Component {
                 date.id
               )}
             >
-              {date.date}
+              {this.renderOneDate(date)}
             </a>
           </li>
         ))}
       </ul>
     );
+  }
+
+  renderOneDate(date) {
+    if (date.id === this.props.selectedDay) {
+      return <strong>{date.date}</strong>;
+    } else {
+      return date.date;
+    }
   }
 }
