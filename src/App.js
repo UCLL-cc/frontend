@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import DatePicker from "./DatePicker";
+import Visualizer from "./Visualizer";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectedDay: false,
       dates: {
         fetching: false,
         data: []
@@ -22,6 +24,11 @@ class App extends Component {
           dates={this.state.dates}
           onSelect={this.onSelectDay}
           parentState={this}
+        />
+        <Visualizer
+          selectedDay={this.state.selectedDay}
+          fetching={this.state.triggers.fetching}
+          triggers={this.state.triggers.data}
         />
       </div>
     );
@@ -48,26 +55,23 @@ class App extends Component {
   }
 
   async onSelectDay(dayId) {
-    alert("Selected " + dayId);
-    /*
     const apiUrl = process.env.REACT_APP_API_HOST;
     this.setState({
+      selectedDay: dayId,
       triggers: {
         fetching: true,
         data: []
       }
     });
 
-    const response = await fetch(`${apiUrl}/triggers/${dayId}`);
-    const triggers = await response.json();
-
+    const response = await fetch(`${apiUrl}/days/${dayId}`);
+    const day = await response.json();
     this.setState({
       triggers: {
         fetching: false,
-        data: triggers
+        data: day.triggers
       }
     });
-    */
   }
 }
 
