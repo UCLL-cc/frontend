@@ -6,11 +6,19 @@ export default class Visualizer extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      selectedAmount: 0
+    };
     this.svgRef = createRef();
   }
 
   render() {
-    return <svg ref={this.svgRef} width="1080" height="500" />;
+    return (
+      <div>
+        <svg ref={this.svgRef} width="1900" height="500" />
+        <span>{this.state.selectedAmount}</span>
+      </div>
+    );
   }
 
   componentDidMount() {
@@ -51,7 +59,7 @@ export default class Visualizer extends Component {
     const y = d3
       .scaleLinear()
       .rangeRound([dimensions.height, 0])
-      .domain([0, d3.max(triggers.map(data => data.triggers))]);
+      .domain([0, d3.max(triggers.map(data => data.count))]);
 
     // Draw the axis
     g
@@ -65,13 +73,13 @@ export default class Visualizer extends Component {
       .attr("class", "axis axis-y")
       .call(d3.axisLeft(y));
 
-    // Labels
     yAxis
       .append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("text-anchor", "end")
+      .attr("dy", ".71em")
+      .attr("fill", "black")
+      .style("text-anchor", "end")
       .text("Frequency");
 
     // Bars
@@ -82,8 +90,18 @@ export default class Visualizer extends Component {
       .append("rect")
       .attr("class", "bar")
       .attr("x", data => x(data.time))
-      .attr("y", data => y(data.triggers))
+      .attr("y", data => y(data.count))
       .attr("width", x.bandwidth())
-      .attr("height", data => dimensions.height - y(data.triggers));
+      .attr("height", data => dimensions.height - y(data.count))
+      .on("mouseover", data => {
+        this.setState({
+          selectedAmount: data.count
+        });
+      })
+      .on("moseout", () => {
+        this.setState({
+          selectedAmount: 0
+        });
+      });
   }
 }

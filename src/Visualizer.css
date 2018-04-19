@@ -6,6 +6,10 @@
   fill: brown;
 }
 
+.axis path,
+.axis line {
+  shape-rendering: crispEdges;
+}
 .axis-x path {
   display: none;
 }

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "d3": "^5.1.0",
+    "d3-tip": "^0.7.1",
     "mobx": "^4.2.0",
     "moment": "^2.22.1",
     "react": "^16.3.1",
