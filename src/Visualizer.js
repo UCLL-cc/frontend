@@ -84,6 +84,15 @@ export default class Visualizer extends Component {
       .attr("x", data => x(data.time))
       .attr("y", data => y(data.count))
       .attr("width", x.bandwidth())
-      .attr("height", data => dimensions.height - y(data.count));
+      .attr("height", data => dimensions.height - y(data.count))
+      .attr("fill", data => {
+        if (data.count < 100) {
+          return "green";
+        }
+        if (data.count < 200) {
+          return "blue";
+        }
+        return "red";
+      });
   }
 }
