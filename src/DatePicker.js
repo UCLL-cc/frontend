@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import moment from "moment";
 
 export default class DatePicker extends Component {
   render() {
@@ -26,10 +27,11 @@ export default class DatePicker extends Component {
   }
 
   renderOneDate(date) {
+    const dateString = moment(date.date).format("DD/MM/YYYY");
     if (date.id === this.props.selectedDay) {
-      return <strong>{date.date}</strong>;
+      return <strong>{dateString}</strong>;
     } else {
-      return date.date;
+      return dateString;
     }
   }
 }

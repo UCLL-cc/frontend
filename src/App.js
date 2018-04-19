@@ -12,12 +12,23 @@ class App extends Component {
         data: []
       },
       triggers: {
-        fetching: false,
+        initialFetch: false,
         data: []
-      }
+      },
+      pollNumber: false
     };
   }
   render() {
+    let vis;
+
+    if (this.state.selectedDay === false) {
+      vis = <h2>Select a date first</h2>;
+    } else if (this.state.triggers.initialFetch) {
+      vis = <h2>Loading...</h2>;
+    } else {
+      vis = <Visualizer triggers={this.state.triggers.data} />;
+    }
+
     return (
       <div>
         <DatePicker
@@ -26,11 +37,7 @@ class App extends Component {
           parentState={this}
           selectedDay={this.state.selectedDay}
         />
-        <Visualizer
-          selectedDay={this.state.selectedDay}
-          fetching={this.state.triggers.fetching}
-          triggers={this.state.triggers.data}
-        />
+        {vis}
       </div>
     );
   }
@@ -55,24 +62,59 @@ class App extends Component {
     });
   }
 
-  async onSelectDay(dayId) {
-    const apiUrl = process.env.REACT_APP_API_HOST;
+  onSelectDay(dayId) {
     this.setState({
-      selectedDay: dayId,
-      triggers: {
-        fetching: true,
-        data: []
-      }
+      selectedDay: dayId
     });
 
-    const response = await fetch(`${apiUrl}/days/${dayId}`);
-    const day = await response.json();
-    this.setState({
-      triggers: {
-        fetching: false,
-        data: day.triggers
+    if (this.state.triggers.initialFetch === false) {
+      this.setState({
+        triggers: {
+          intitialFetch: true
+        }
+      });
+    }
+
+    if (this.state.pollNumber !== false) {
+      clearInterval(this.state.pollNumber);
+    }
+    const updater = async () => {
+      function generateRandom() {
+        let array = [];
+        for (let hour = 0; hour < 24; hour++) {
+          for (let minutes = 0; minutes < 60; minutes += 60) {
+            array.push({
+              time: `${hour}:${minutes}`,
+              triggers: Math.random()
+            });
+          }
+        }
+        return array;
       }
+      /*
+      const apiUrl = process.env.REACT_APP_API_HOST;
+      const response = await fetch(`${apiUrl}/days/${dayId}`);
+      const day = await response.json();
+      */
+      const day = generateRandom();
+
+      this.setState({
+        triggers: {
+          intitialFetch: false,
+          data: day
+        }
+      });
+    };
+
+    const pollNumber = setInterval(updater, 2000);
+    this.setState({
+      pollNumber
     });
+    updater();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.pollNumber);
   }
 }
 
