@@ -6,19 +6,11 @@ export default class Visualizer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      selectedAmount: 0
-    };
     this.svgRef = createRef();
   }
 
   render() {
-    return (
-      <div>
-        <svg ref={this.svgRef} width="1900" height="500" />
-        <span>{this.state.selectedAmount}</span>
-      </div>
-    );
+    return <svg ref={this.svgRef} width="1900" height="500" />;
   }
 
   componentDidMount() {
@@ -62,7 +54,7 @@ export default class Visualizer extends Component {
       .domain([0, d3.max(triggers.map(data => data.count))]);
 
     // Draw the axis
-    g
+    const xAxis = g
       .append("g")
       .attr("class", "axis axis-x")
       .attr("transform", `translate(0, ${dimensions.height})`)
@@ -71,7 +63,7 @@ export default class Visualizer extends Component {
     const yAxis = g
       .append("g")
       .attr("class", "axis axis-y")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).tickSize(1));
 
     yAxis
       .append("text")
@@ -92,16 +84,6 @@ export default class Visualizer extends Component {
       .attr("x", data => x(data.time))
       .attr("y", data => y(data.count))
       .attr("width", x.bandwidth())
-      .attr("height", data => dimensions.height - y(data.count))
-      .on("mouseover", data => {
-        this.setState({
-          selectedAmount: data.count
-        });
-      })
-      .on("moseout", () => {
-        this.setState({
-          selectedAmount: 0
-        });
-      });
+      .attr("height", data => dimensions.height - y(data.count));
   }
 }
