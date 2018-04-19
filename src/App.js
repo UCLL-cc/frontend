@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import DatePicker from "./DatePicker";
 import Visualizer from "./Visualizer";
+import moment from "moment";
 
 class App extends Component {
   constructor(props) {
@@ -70,7 +71,7 @@ class App extends Component {
     if (this.state.triggers.initialFetch === false) {
       this.setState({
         triggers: {
-          intitialFetch: true
+          initialFetch: true
         }
       });
     }
@@ -79,29 +80,33 @@ class App extends Component {
       clearInterval(this.state.pollNumber);
     }
     const updater = async () => {
-      function generateRandom() {
-        let array = [];
-        for (let hour = 0; hour < 24; hour++) {
-          for (let minutes = 0; minutes < 60; minutes += 60) {
-            array.push({
-              time: `${hour}:${minutes}`,
-              triggers: Math.random()
-            });
-          }
-        }
-        return array;
-      }
-      /*
       const apiUrl = process.env.REACT_APP_API_HOST;
       const response = await fetch(`${apiUrl}/days/${dayId}`);
       const day = await response.json();
-      */
-      const day = generateRandom();
+
+      const triggerMap = new Map();
+      day.triggers.forEach(trigger => {
+        const momentObj = moment(trigger.time, moment.HTML5_FMT.TIME_MS);
+        const hour = momentObj.hour();
+        const minute = Math.floor(momentObj.minute() / 5) * 5;
+        const time = `${hour}:${minute}`;
+        if (!triggerMap.has(time)) {
+          triggerMap.set(time, 0);
+        }
+        triggerMap.set(time, triggerMap.get(time) + 1);
+      });
+
+      const triggers = Array.from(triggerMap.entries()).map(([key, value]) => {
+        return {
+          time: key,
+          triggers: value
+        };
+      });
 
       this.setState({
         triggers: {
           intitialFetch: false,
-          data: day
+          data: triggers
         }
       });
     };
@@ -110,6 +115,7 @@ class App extends Component {
     this.setState({
       pollNumber
     });
+
     updater();
   }
 

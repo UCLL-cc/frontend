@@ -45,7 +45,7 @@ export default class Visualizer extends Component {
     const x = d3
       .scaleBand()
       .rangeRound([0, dimensions.width])
-      .padding(0.1 / triggers.length)
+      .padding(1 / triggers.length)
       .domain(triggers.map(data => data.time));
 
     const y = d3
