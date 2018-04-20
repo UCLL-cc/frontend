@@ -140,7 +140,7 @@ class App extends Component {
     };
 
     updater();
-    const pollNumber = setInterval(updater, 2000);
+    const pollNumber = setInterval(updater, 500);
     this.setState({
       pollNumber
     });
