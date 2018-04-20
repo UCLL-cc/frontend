@@ -140,11 +140,12 @@ class App extends Component {
 
     updater();
 
-    /*const pollNumber = setInterval(updater, 500);
-    this.setState({
-      pollNumber
-    });
-    */
+    if (process.env.REACT_APP_POLLING) {
+      const pollNumber = setInterval(updater, 500);
+      this.setState({
+        pollNumber
+      });
+    }
   }
 
   async getTriggers(dayId) {
