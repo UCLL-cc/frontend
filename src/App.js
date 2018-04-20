@@ -17,8 +17,7 @@ class App extends Component {
       triggers: {
         fetching: false,
         initialFetch: false,
-        previousDay: false,
-        data: []
+        previousDay: false
       },
       pollNumber: false
     };
@@ -32,7 +31,12 @@ class App extends Component {
     } else if (this.state.triggers.initialFetch) {
       vis = <h2>Loading...</h2>;
     } else {
-      vis = <Visualizer triggers={this.state.triggers.data} />;
+      vis = (
+        <Visualizer
+          triggers={this.state.triggers.data}
+          predicted={this.state.triggers.predicted}
+        />
+      );
     }
 
     return (
@@ -118,10 +122,11 @@ class App extends Component {
 
           this.setState(previousState => ({
             triggers: {
-              ...previousState,
+              ...previousState.triggers,
               fetching: false,
               initialFetch: false,
-              data: triggers
+              data: triggers.triggers,
+              predicted: triggers.predicted
             }
           }));
         }
@@ -148,7 +153,7 @@ class App extends Component {
     });
     const day = response.data;
 
-    return day.triggers;
+    return day.data;
   }
 
   componentWillUnmount() {

@@ -14,14 +14,14 @@ export default class Visualizer extends Component {
   }
 
   componentDidMount() {
-    this.draw(this.props.triggers);
+    this.draw(this.props.triggers, this.props.predicted);
   }
 
   componentDidUpdate() {
-    this.draw(this.props.triggers);
+    this.draw(this.props.triggers, this.props.predicted);
   }
 
-  draw(triggers) {
+  draw(triggers, predicted) {
     const svg = d3.select(this.svgRef.current);
     // Remove the old
     svg.select("g").remove();
@@ -94,5 +94,14 @@ export default class Visualizer extends Component {
         }
         return "red";
       });
+
+    g
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", data => x(predicted.time))
+      .attr("y", data => y(predicted.count))
+      .attr("width", x.bandwidth())
+      .attr("height", data => dimensions.height - y(predicted.count))
+      .attr("fill", "orange");
   }
 }
