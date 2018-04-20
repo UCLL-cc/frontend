@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import DatePicker from "./DatePicker";
 import Visualizer from "./Visualizer";
 import axios from "axios";
-import moment from "moment";
 
 class App extends Component {
   constructor(props) {
@@ -140,10 +139,12 @@ class App extends Component {
     };
 
     updater();
-    const pollNumber = setInterval(updater, 500);
+
+    /*const pollNumber = setInterval(updater, 500);
     this.setState({
       pollNumber
     });
+    */
   }
 
   async getTriggers(dayId) {

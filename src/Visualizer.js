@@ -6,11 +6,63 @@ export default class Visualizer extends Component {
   constructor(props) {
     super(props);
 
+    this.colors = {
+      low: "green",
+      mid: "blue",
+      high: "red",
+      prediction: "orange"
+    };
     this.svgRef = createRef();
   }
 
   render() {
-    return <svg ref={this.svgRef} width="1900" height="500" />;
+    return (
+      <React.Fragment>
+        <svg ref={this.svgRef} width="1900" height="500" />
+        <table
+          style={{
+            border: "1px solid black",
+            marginLeft: "50px"
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Legenda</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              style={{
+                color: this.colors.low
+              }}
+            >
+              <td>Low</td>
+            </tr>
+            <tr
+              style={{
+                color: this.colors.mid
+              }}
+            >
+              <td>Mid</td>
+            </tr>
+            <tr
+              style={{
+                color: this.colors.high
+              }}
+            >
+              <td>High</td>
+            </tr>
+            <tr
+              style={{
+                color: this.colors.prediction
+              }}
+            >
+              <td>Prediction</td>
+            </tr>
+          </tbody>
+        </table>
+      </React.Fragment>
+    );
   }
 
   componentDidMount() {
@@ -51,10 +103,10 @@ export default class Visualizer extends Component {
     const y = d3
       .scaleLinear()
       .rangeRound([dimensions.height, 0])
-      .domain([0, d3.max(triggers.map(data => data.count))]);
+      .domain([0, Math.max(100, d3.max(triggers.map(data => data.count)))]);
 
     // Draw the axis
-    const xAxis = g
+    g
       .append("g")
       .attr("class", "axis axis-x")
       .attr("transform", `translate(0, ${dimensions.height})`)
@@ -97,7 +149,7 @@ export default class Visualizer extends Component {
 
     g
       .append("rect")
-      .attr("class", "bar")
+      .attr("class", "bar prediction")
       .attr("x", data => x(predicted.time))
       .attr("y", data => y(predicted.count))
       .attr("width", x.bandwidth())
