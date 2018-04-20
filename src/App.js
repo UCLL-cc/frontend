@@ -15,6 +15,7 @@ class App extends Component {
         data: []
       },
       triggers: {
+        fetching: false,
         initialFetch: false,
         previousDay: false,
         data: []
@@ -83,26 +84,50 @@ class App extends Component {
     if (this.state.pollNumber !== false) {
       clearInterval(this.state.pollNumber);
     }
+
     const updater = async () => {
       try {
         // If there is a new day, cancel the old
-        if (this.state.previousDay !== dayId) {
+        if (this.state.triggers.previousDay !== dayId) {
           if (this.cancel) {
-            this.cancel();
+            this.setState(previousState => ({
+              triggers: {
+                ...previousState.triggers,
+                fetching: false
+              }
+            }));
+            this.cancel("Switched days");
           }
         }
-        const triggers = await this.getTriggers(dayId);
 
-        this.setState({
+        this.setState(previousState => ({
           triggers: {
-            initialFetch: false,
-            previousDay: dayId,
-            data: triggers
+            ...previousState.triggers,
+            previousDay: dayId
           }
-        });
+        }));
+
+        if (!this.state.triggers.fetching) {
+          this.setState(previousState => ({
+            triggers: {
+              ...previousState.triggers,
+              fetching: true
+            }
+          }));
+          const triggers = await this.getTriggers(dayId);
+
+          this.setState(previousState => ({
+            triggers: {
+              ...previousState,
+              fetching: false,
+              initialFetch: false,
+              data: triggers
+            }
+          }));
+        }
       } catch (e) {
         if (axios.isCancel(e)) {
-          console.error("Thrown by timeout");
+          console.log("Canceled request", e.message);
         } else {
           throw e;
         }
