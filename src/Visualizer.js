@@ -18,7 +18,7 @@ export default class Visualizer extends Component {
   render() {
     return (
       <React.Fragment>
-        <svg ref={this.svgRef} width="1900" height="500" />
+        <svg ref={this.svgRef} width={window.innerWidth - 10} height="500" />
         <table
           style={{
             border: "1px solid black",
