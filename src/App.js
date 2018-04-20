@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import DatePicker from "./DatePicker";
 import Visualizer from "./Visualizer";
+import axios from "axios";
 import moment from "moment";
 
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       selectedDay: false,
       dates: {
@@ -14,6 +16,7 @@ class App extends Component {
       },
       triggers: {
         initialFetch: false,
+        previousDay: false,
         data: []
       },
       pollNumber: false
@@ -81,23 +84,46 @@ class App extends Component {
       clearInterval(this.state.pollNumber);
     }
     const updater = async () => {
-      const apiUrl = process.env.REACT_APP_API_HOST;
-      const response = await fetch(`${apiUrl}/days/${dayId}`);
-      const day = await response.json();
-
-      this.setState({
-        triggers: {
-          intitialFetch: false,
-          data: day.triggers
+      try {
+        // If there is a new day, cancel the old
+        if (this.state.previousDay !== dayId) {
+          if (this.cancel) {
+            this.cancel();
+          }
         }
-      });
+        const triggers = await this.getTriggers(dayId);
+
+        this.setState({
+          triggers: {
+            initialFetch: false,
+            previousDay: dayId,
+            data: triggers
+          }
+        });
+      } catch (e) {
+        if (axios.isCancel(e)) {
+          console.error("Thrown by timeout");
+        } else {
+          throw e;
+        }
+      }
     };
 
+    updater();
     const pollNumber = setInterval(updater, 2000);
     this.setState({
       pollNumber
     });
-    updater();
+  }
+
+  async getTriggers(dayId) {
+    const apiUrl = process.env.REACT_APP_API_HOST;
+    const response = await axios.get(`${apiUrl}/days/${dayId}/?format=json`, {
+      cancelToken: new axios.CancelToken(c => (this.cancel = c))
+    });
+    const day = response.data;
+
+    return day.triggers;
   }
 
   componentWillUnmount() {
