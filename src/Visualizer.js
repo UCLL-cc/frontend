@@ -27,7 +27,7 @@ export default class Visualizer extends Component {
         >
           <thead>
             <tr>
-              <th>Legenda</th>
+              <th>Legend</th>
             </tr>
           </thead>
           <tbody>
