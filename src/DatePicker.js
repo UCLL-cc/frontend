@@ -10,7 +10,7 @@ export default class DatePicker extends Component {
 
     return (
       <ul>
-        {dates.data.map(date => (
+        {dates.data.filter(date => date.id !== 5).map(date => (
           <li key={date.id}>
             <a
               onClick={this.props.onSelect.bind(
